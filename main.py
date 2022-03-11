@@ -45,7 +45,7 @@ def promo_get_id(promo_id: int):
     db_item = db.session.query(Promo).get(promo_id)
     if db_item:
         return db_item
-    raise HTTPException(status_code=404, detail="Promo not found")
+    raise HTTPException(status_code=404, detail=f"Promotion with the id={promo_id} does not exist")
 
 
 @app.put("/promo/{promo_id}")
@@ -64,7 +64,7 @@ def promo_put_id(promo_id: int, data: PromoSchemaModify):
 
         db.session.commit()
         return res
-    raise HTTPException(status_code=404, detail="Promo not found")
+    raise HTTPException(status_code=404, detail=f"Promotion with the id={promo_id} does not exist")
 
 
 @app.delete("/promo/{promo_id}", status_code=204)
@@ -74,14 +74,14 @@ def promo_delete_id(promo_id: int):
         db.session.delete(db_item)
         db.session.commit()
         return
-    raise HTTPException(status_code=404, detail="Promo not found")
+    raise HTTPException(status_code=404, detail=f"Promotion with the id={promo_id} does not exist")
 
 
 @app.post("/promo/{promo_id}/participant", status_code=201)
 def promo_post_participant(promo_id: int, item: ParticipantSchemaRequest) -> int:
     db_promo = db.session.query(Promo).get(promo_id)
     if not db_promo:
-        raise HTTPException(status_code=404, detail="Promo not found")
+        raise HTTPException(status_code=404, detail=f"Promotion with the id={promo_id} does not exist")
 
     db_item = Participant(name=item.name, promo_id=promo_id)
     db.session.add(db_item)
@@ -94,7 +94,7 @@ def promo_delete_participant(promo_id: int, participant_id: int):
     db_promo = db.session.query(Promo).get(promo_id)
     db_part = db.session.query(Participant).get(participant_id)
     if not db_promo or not db_part:
-        raise HTTPException(status_code=404, detail="Promo or participant not found")
+        raise HTTPException(status_code=404, detail=f"Promotion with the id={promo_id} does not exist")
 
     db.session.delete(db_part)
     db.session.commit()
@@ -104,7 +104,7 @@ def promo_delete_participant(promo_id: int, participant_id: int):
 def promo_post_prize(promo_id: int, item: PrizeSchemaRequest) -> int:
     db_promo = db.session.query(Promo).get(promo_id)
     if not db_promo:
-        raise HTTPException(status_code=404, detail="Promo not found")
+        raise HTTPException(status_code=404, detail=f"Promotion with the id={promo_id} does not exist")
 
     db_item = Prize(description=item.description, promo_id=promo_id)
     db.session.add(db_item)
@@ -117,7 +117,7 @@ def promo_delete_prize(promo_id: int, prize_id: int):
     db_promo = db.session.query(Promo).get(promo_id)
     db_part = db.session.query(Prize).get(prize_id)
     if not db_promo or not db_part:
-        raise HTTPException(status_code=404, detail="Promo or prize not found")
+        raise HTTPException(status_code=404, detail=f"Promotion with the id={promo_id} does not exist")
 
     db.session.delete(db_part)
     db.session.commit()
@@ -132,7 +132,7 @@ def promo_raffle(promo_id: int):
 
     if len(prizes) != len(people):
         raise HTTPException(
-            status_code=409, detail="Number of prizes and participants not equally"
+            status_code=409, detail="Number of prizes and participants is not equal"
         )
 
     result = []
